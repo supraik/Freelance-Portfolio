@@ -1,0 +1,262 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Premium Editorial Design System for Anushree Singh Portfolio
+   All colors MUST be HSL.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+
+@layer base {
+  :root {
+    /* Premium monochrome palette */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
+
+    /* Deep charcoal primary */
+    --primary: 0 0% 8%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Soft warm gray secondary */
+    --secondary: 30 5% 96%;
+    --secondary-foreground: 0 0% 8%;
+
+    /* Muted tones for subtle elements */
+    --muted: 30 5% 94%;
+    --muted-foreground: 0 0% 45%;
+
+    /* Warm accent for subtle highlights */
+    --accent: 30 10% 92%;
+    --accent-foreground: 0 0% 8%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Refined borders */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 8%;
+
+    --radius: 0rem;
+
+    /* Editorial spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 6rem;
+    --space-2xl: 8rem;
+
+    /* Typography scale */
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+
+    /* Animation timing */
+    --ease-elegant: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-fast: 200ms;
+    --duration-medium: 400ms;
+    --duration-slow: 800ms;
+    --duration-intro: 1200ms;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 8%;
+    --sidebar-primary: 0 0% 8%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 30 5% 96%;
+    --sidebar-accent-foreground: 0 0% 8%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 8%;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 4%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 95%;
+
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 0% 95%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 0 0% 95%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    line-height: 1.6;
+  }
+
+  /* Elegant typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Premium selection styling */
+  ::selection {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  /* Hide scrollbar for horizontal galleries */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  /* Editorial container with generous margins */
+  .editorial-container {
+    @apply mx-auto px-6 md:px-12 lg:px-24;
+    max-width: 1800px;
+  }
+
+  /* Full-bleed sections */
+  .full-bleed {
+    @apply w-screen relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+
+  /* Premium image wrapper */
+  .image-editorial {
+    @apply overflow-hidden;
+  }
+
+  .image-editorial img {
+    @apply w-full h-full object-cover transition-transform;
+    transition-duration: var(--duration-slow);
+    transition-timing-function: var(--ease-elegant);
+  }
+
+  .image-editorial:hover img {
+    transform: scale(1.03);
+  }
+
+  /* Elegant link underline animation */
+  .link-elegant {
+    @apply relative inline-block;
+  }
+
+  .link-elegant::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-px bg-current;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--duration-medium) var(--ease-elegant);
+  }
+
+  .link-elegant:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Category title styling */
+  .category-title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+}
+
+@layer utilities {
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Elegant spacing utilities */
+  .space-editorial {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .space-editorial-sm {
+    @apply py-8 md:py-12 lg:py-16;
+  }
+
+  /* Premium letter spacing */
+  .tracking-editorial {
+    letter-spacing: 0.15em;
+  }
+
+  .tracking-editorial-wide {
+    letter-spacing: 0.25em;
+  }
+
+  /* Fade utilities for scroll animations */
+  .fade-up-ready {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .fade-up-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity var(--duration-slow) var(--ease-elegant),
+                transform var(--duration-slow) var(--ease-elegant);
+  }
+}
