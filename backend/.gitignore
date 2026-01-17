@@ -1,1 +1,53 @@
-./Backend.md 
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.html
+coverage.txt
+
+# Go workspace file
+go.work
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Uploads directory (if you want to ignore uploads)
+uploads/*
+!uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+vendor/
+
+# Air live reload
+tmp/
+
+# Backend Documentation (optional - remove if you want to commit it)./Backend.md 
+./Backend.md
+./API_DOCUMENTATION.md
+./DATABASE_SCHEMA.md
+./SETUP_GUIDE.md
+./EMAIL_FEATURE.md
+./Email_SYSTEM.md
+
+
