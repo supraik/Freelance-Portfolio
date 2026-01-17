@@ -4,7 +4,7 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/yourusername/portfolio-backend/internal/models"
+	"github.com/supraik/Freelance-Portfolio/internal/models"
 )
 
 // GalleryRepository handles database operations for galleries

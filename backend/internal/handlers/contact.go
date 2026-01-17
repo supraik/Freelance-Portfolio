@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
-	"github.com/yourusername/portfolio-backend/internal/models"
-	"github.com/yourusername/portfolio-backend/internal/repository"
-	"github.com/yourusername/portfolio-backend/internal/services"
-	"github.com/yourusername/portfolio-backend/pkg/response"
+	"github.com/supraik/Freelance-Portfolio/internal/models"
+	"github.com/supraik/Freelance-Portfolio/internal/repository"
+	"github.com/supraik/Freelance-Portfolio/internal/services"
+	"github.com/supraik/Freelance-Portfolio/pkg/response"
 )
 
 // ContactHandler handles contact form requests

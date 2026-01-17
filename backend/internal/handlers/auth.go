@@ -10,11 +10,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/yourusername/portfolio-backend/internal/config"
-	"github.com/yourusername/portfolio-backend/internal/middleware"
-	"github.com/yourusername/portfolio-backend/internal/models"
-	"github.com/yourusername/portfolio-backend/internal/repository"
-	"github.com/yourusername/portfolio-backend/pkg/response"
+	"github.com/supraik/Freelance-Portfolio/internal/config"
+	"github.com/supraik/Freelance-Portfolio/internal/middleware"
+	"github.com/supraik/Freelance-Portfolio/internal/models"
+	"github.com/supraik/Freelance-Portfolio/internal/repository"
+	"github.com/supraik/Freelance-Portfolio/pkg/response"
 )
 
 // AuthHandler handles authentication requests

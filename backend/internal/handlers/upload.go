@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/yourusername/portfolio-backend/internal/services"
-	"github.com/yourusername/portfolio-backend/pkg/response"
+	"github.com/supraik/Freelance-Portfolio/internal/services"
+	"github.com/supraik/Freelance-Portfolio/pkg/response"
 )
 
 // UploadHandler handles file upload requests

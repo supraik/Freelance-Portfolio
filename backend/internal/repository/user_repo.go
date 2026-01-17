@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/yourusername/portfolio-backend/internal/models"
+	"github.com/supraik/Freelance-Portfolio/internal/models"
 )
 
 // UserRepository handles database operations for users

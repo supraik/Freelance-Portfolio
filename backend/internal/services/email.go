@@ -7,8 +7,8 @@ import (
 	"html/template"
 	"net/smtp"
 
-	"github.com/yourusername/portfolio-backend/internal/config"
-	"github.com/yourusername/portfolio-backend/internal/models"
+	"github.com/supraik/Freelance-Portfolio/internal/config"
+	"github.com/supraik/Freelance-Portfolio/internal/models"
 )
 
 // EmailService handles sending emails

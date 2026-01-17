@@ -6,11 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/yourusername/portfolio-backend/internal/config"
-	"github.com/yourusername/portfolio-backend/internal/handlers"
-	"github.com/yourusername/portfolio-backend/internal/middleware"
-	"github.com/yourusername/portfolio-backend/internal/repository"
-	"github.com/yourusername/portfolio-backend/internal/services"
+	"github.com/supraik/Freelance-Portfolio/internal/config"
+	"github.com/supraik/Freelance-Portfolio/internal/handlers"
+	"github.com/supraik/Freelance-Portfolio/internal/middleware"
+	"github.com/supraik/Freelance-Portfolio/internal/repository"
+	"github.com/supraik/Freelance-Portfolio/internal/services"
 )
 
 // New creates and configures the router

@@ -42,12 +42,25 @@ vendor/
 # Air live reload
 tmp/
 
-# Backend Documentation (optional - remove if you want to commit it)./Backend.md 
-./Backend.md
-./API_DOCUMENTATION.md
-./DATABASE_SCHEMA.md
-./SETUP_GUIDE.md
-./EMAIL_FEATURE.md
-./Email_SYSTEM.md
+# Logs
+*.log
+logs/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Build artifacts
+*.o
+*.a
+
+# Temporary files
+*.tmp
+*.bak
+
+# Backend binary
+server
+Freelance-Portfolio
 
 
