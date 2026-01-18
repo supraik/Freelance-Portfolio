@@ -47,7 +47,8 @@ cp .env.example .env
 # - SMTP settings (for email)
 
 # Run the server
-go run cmd/server/main.go
+
+
 ```
 
 The server will start on http://localhost:8080
