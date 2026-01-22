@@ -1,63 +1,77 @@
-# Database Setup - Neon Serverless PostgreSQL
+# Database Setup - Local PostgreSQL
 
 ## Overview
 
-This portfolio backend uses **Neon** - a serverless PostgreSQL database that offers:
+This portfolio backend uses **PostgreSQL** installed locally for development. You'll deploy to a cloud database later when ready for production.
 
-- ✅ **Serverless Architecture** - Auto-scaling and pay-per-use
-- ✅ **Free Tier** - Perfect for development and small projects
-- ✅ **Instant Provisioning** - Database ready in seconds
-- ✅ **Branching** - Create database branches like Git
-- ✅ **Auto-Suspend** - Saves costs when inactive
-- ✅ **PostgreSQL Compatible** - Full SQL support
+**Current Setup:** Local PostgreSQL installation
+**Future:** Deploy to Neon, Supabase, Railway, or other cloud provider
 
-## Why Neon?
+## Why Local First?
 
-| Feature | Neon | Traditional PostgreSQL |
-|---------|------|----------------------|
-| Setup Time | < 1 minute | Hours |
-| Scaling | Automatic | Manual |
-| Cost (Idle) | $0 | Server costs |
-| Branching | Native | Manual backups |
-| Maintenance | Zero | Regular updates |
+- ✅ **Full Control** - Complete access to your database
+- ✅ **No Internet Required** - Work offline
+- ✅ **Learn PostgreSQL** - Understand database operations
+- ✅ **Free** - No usage limits or costs
+- ✅ **Easy to Deploy Later** - Simple migration to cloud
 
-## Quick Start
+## Quick Start - Windows
 
-### 1. Create Neon Account
+### 1. Download PostgreSQL
 
-1. Visit [neon.tech](https://neon.tech)
-2. Sign up with GitHub or Google
-3. Verify your email
+1. Visit [postgresql.org/download/windows](https://www.postgresql.org/download/windows/)
+2. Download the installer (Version 16 recommended)
+3. Run the installer
 
-### 2. Create a New Project
+### 2. Installation Steps
 
-1. Click **"New Project"**
-2. Configure your project:
-   - **Name**: `portfolio-backend`
-   - **Region**: Choose closest to your users
-   - **PostgreSQL Version**: 16 (recommended)
-3. Click **"Create Project"**
+During installation:
 
-### 3. Get Connection String
+1. **Installation Directory**: Use default (`C:\Program Files\PostgreSQL\16`)
+2. **Components**: 
+   - ✅ PostgreSQL Server
+   - ✅ pgAdmin 4 (GUI tool)
+   - ✅ Command Line Tools
+   - ✅ Stack Builder (optional)
+3. **Data Directory**: Use default
+4. **Password**: Set a strong password for the `postgres` superuser
+   - ⚠️ **Remember this password!** You'll need it later
+5. **Port**: Use default `5432`
+6. **Locale**: Use default
 
-After project creation, you'll see your connection string:
+### 3. Create Database
 
-```
-postgresql://[user]:[password]@[host]/[database]?sslmode=require
-```
+**Option A: Using pgAdmin (GUI)**
 
-**Example:**
-```
-postgresql://neondb_owner:abc123xyz@ep-cool-meadow-123456.us-east-1.aws.neon.tech/neondb?sslmode=require
+1. Open pgAdmin 4
+2. Connect to PostgreSQL (enter your password)
+3. Right-click **"Databases"** → **"Create"** → **"Database"**
+4. Enter database name: `portfolio_db`
+5. Click **"Save"**
+
+**Option B: Using Command Line**
+
+```bash
+# Open Command Prompt or PowerShell
+psql -U postgres
+
+# Enter your password when prompted
+# Then create database:
+CREATE DATABASE portfolio_db;
+
+# Exit psql:
+\q
 ```
 
 ### 4. Configure Backend
 
-Copy your connection string to `.env`:
+Create/update `backend/.env`:
 
 ```env
-# Database Configuration (Neon)
-DATABASE_URL=postgresql://neondb_owner:your-password@ep-xxx.region.aws.neon.tech/neondb?sslmode=require
+# Database Configuration (Local PostgreSQL)
+DATABASE_URL=postgresql://postgres:your-password@localhost:5432/portfolio_db?sslmode=disable
+
+# Note: Replace 'your-password' with your PostgreSQL password
 ```
 
 ### 5. Test Connection
@@ -171,62 +185,91 @@ DB_CONN_MAX_LIFETIME=5m
 ### Connection String Format
 
 ```
-postgresql://[username]:[password]@[host]/[database]?[parameters]
+postgresql://[username]:[password]@[host]:[port]/[database]?[parameters]
 ```
 
 **Components:**
-- **username**: Database user (usually `neondb_owner`)
-- **password**: Your database password
-- **host**: Neon endpoint (e.g., `ep-xxx.us-east-1.aws.neon.tech`)
-- **database**: Database name (usually `neondb`)
-- **parameters**: `sslmode=require` (required for Neon)
+- **username**: Database user (`postgres` by default)
+- **password**: Your PostgreSQL password (set during installation)
+- **host**: `localhost` (your local machine)
+- **port**: `5432` (default PostgreSQL port)
+- **database**: Database name (`portfolio_db`)
+- **parameters**: `sslmode=disable` (SSL not needed locally)
 
-## Neon Dashboard Features
+## Working with Your Local Database
 
-### 1. SQL Editor
+### Using pgAdmin 4 (GUI Tool)
 
-Run queries directly in the dashboard:
+pgAdmin is installed with PostgreSQL and provides a visual interface:
 
-```sql
--- View all contact messages
-SELECT * FROM contact_messages ORDER BY created_at DESC;
+1. **Open pgAdmin 4**
+2. **Connect** to PostgreSQL server (localhost)
+3. **Navigate**: Servers → PostgreSQL 16 → Databases → portfolio_db
+4. **Query Tool**: Tools → Query Tool (or F5)
 
--- Check table sizes
-SELECT 
-    schemaname,
-    tablename,
-    pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
-FROM pg_tables
-WHERE schemaname = 'public';
-```
+**Useful pgAdmin Features:**
+- **Browse Tables**: Expand Schemas → public → Tables
+- **View Data**: Right-click table → View/Edit Data
+- **Run Queries**: Use Query Tool for SQL commands
+- **Backup/Restore**: Right-click database → Backup/Restore
 
-### 2. Monitoring
+### Using psql (Command Line)
 
-- **Queries**: Track slow queries
-- **Connections**: Active database connections
-- **Storage**: Database size and usage
-- **Compute**: CPU and memory usage
-
-### 3. Branching
-
-Create database branches for testing:
+Connect to your database:
 
 ```bash
-# Create branch from main
-neon branches create --name staging
+# Connect to portfolio_db
+psql -U postgres -d portfolio_db
 
-# Get branch connection string
-neon connection-string staging
+# Or use connection string
+psql "postgresql://postgres:your-password@localhost:5432/portfolio_db"
 ```
 
-Use different connection strings for environments:
-```env
-# Development
-DATABASE_URL=postgresql://...@ep-main-123.neon.tech/neondb
-
-# Staging
-DATABASE_URL=postgresql://...@ep-staging-456.neon.tech/neondb
+**Useful psql commands:**
+```sql
+\l              -- List all databases
+\c portfolio_db -- Connect to portfolio_db
+\dt             -- List all tables
+\d table_name   -- Describe table structure
+\q              -- Quit psql
 ```
+
+## Monitoring Your Database
+
+### Check Database Size
+
+```sql
+SELECT 
+    pg_size_pretty(pg_database_size('portfolio_db')) AS database_size;
+```
+
+### View Table Information
+
+```sql
+SELECT 
+    tablename,
+    pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size,
+    pg_size_pretty(pg_relation_size(schemaname||'.'||tablename)) AS table_size,
+    pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename) - pg_relation_size(schemaname||'.'||tablename)) AS index_size
+FROM pg_tables
+WHERE schemaname = 'public'
+ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+```
+
+### Active Connections
+
+```sql
+SELECT 
+    pid,
+    usename,
+    application_name,
+    client_addr,
+    state,
+    query
+FROM pg_stat_activity
+WHERE datname = 'portfolio_db';
+```
+
 
 ## Migrations System
 
@@ -312,7 +355,9 @@ func main() {
 Using `psql`:
 
 ```bash
-psql "postgresql://neondb_owner:password@ep-xxx.neon.tech/neondb?sslmode=require"
+psql -U postgres -d portfolio_db
+# Or
+psql "postgresql://postgres:your-password@localhost:5432/portfolio_db"
 ```
 
 Using Go:
@@ -359,14 +404,37 @@ VALUES
 
 ### Backup & Restore
 
-Neon automatically backs up your database. To manually export:
+**Create Backup:**
 
 ```bash
-# Export database
-pg_dump "postgresql://..." > backup.sql
+# Using pg_dump
+pg_dump -U postgres -d portfolio_db > backup.sql
 
-# Import database
-psql "postgresql://..." < backup.sql
+# With password (interactive)
+pg_dump -U postgres -d portfolio_db -F c -f backup.dump
+
+# Or with connection string
+pg_dump "postgresql://postgres:password@localhost:5432/portfolio_db" > backup.sql
+```
+
+**Restore Backup:**
+
+```bash
+# From SQL file
+psql -U postgres -d portfolio_db < backup.sql
+
+# From custom format
+pg_restore -U postgres -d portfolio_db backup.dump
+```
+
+**Automated Backup Script (PowerShell):**
+
+```powershell
+# backup.ps1
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$filename = "portfolio_backup_$timestamp.sql"
+pg_dump -U postgres -d portfolio_db > "backups\$filename"
+Write-Host "Backup created: $filename"
 ```
 
 ## Connection Pooling
@@ -400,24 +468,44 @@ func Connect(databaseURL string) (*sql.DB, error) {
 
 **Error:** `connection refused`
 ```bash
-# Check connection string
-echo $DATABASE_URL
+# Check if PostgreSQL is running
+# Open Services (services.msc) and look for "postgresql-x64-16"
+# Or use PowerShell:
+Get-Service -Name postgresql*
 
-# Verify SSL mode is set
-# Neon requires: ?sslmode=require
+# Start if stopped:
+Start-Service postgresql-x64-16
+
+# Check connection string
+echo $env:DATABASE_URL
 ```
 
 **Error:** `password authentication failed`
 ```bash
-# Reset password in Neon dashboard
-# Settings → Reset Password
+# Verify password in .env matches PostgreSQL password
+# To reset PostgreSQL password:
+psql -U postgres
+ALTER USER postgres PASSWORD 'new-password';
+\q
+
 # Update DATABASE_URL in .env
 ```
 
-**Error:** `database does not exist`
+**Error:** `database "portfolio_db" does not exist`
 ```bash
-# Use default database name (usually "neondb")
-# Or create new database in Neon console
+# Create the database
+psql -U postgres
+CREATE DATABASE portfolio_db;
+\q
+```
+
+**Error:** `psql: command not found`
+```bash
+# Add PostgreSQL to PATH
+# Add to System Environment Variables:
+# C:\Program Files\PostgreSQL\16\bin
+
+# Or restart PowerShell/Command Prompt
 ```
 
 ### Migration Failures
@@ -442,14 +530,48 @@ psql $DATABASE_URL -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 
 **Slow Queries:**
 ```sql
--- Enable query logging in code
--- Or use Neon dashboard → Queries tab
+-- Enable query logging
+ALTER SYSTEM SET log_statement = 'all';
+ALTER SYSTEM SET log_duration = on;
+SELECT pg_reload_conf();
+
+-- View slow queries
+SELECT 
+    query,
+    calls,
+    total_exec_time,
+    mean_exec_time,
+    max_exec_time
+FROM pg_stat_statements
+ORDER BY mean_exec_time DESC
+LIMIT 10;
+```
+
+**Check Indexes:**
+```sql
+-- List all indexes
+SELECT 
+    schemaname,
+    tablename,
+    indexname,
+    indexdef
+FROM pg_indexes
+WHERE schemaname = 'public';
 ```
 
 **Too Many Connections:**
+```sql
+-- Check max connections
+SHOW max_connections;
+
+-- View current connections
+SELECT count(*) FROM pg_stat_activity;
+```
+
 ```go
-// Reduce connection pool size
+// Reduce connection pool size in code
 db.SetMaxOpenConns(10)  // Lower from 25
+db.SetMaxIdleConns(2)   // Lower from 5
 ```
 
 ## Security Best Practices
@@ -472,16 +594,34 @@ export DATABASE_URL="postgresql://..."
 # Production (use secrets manager)
 ```
 
-### 3. Enable SSL
+### 3. Use SSL in Production Only
 
-Always use `sslmode=require` for Neon:
+For local development:
+```
+?sslmode=disable
+```
+
+For production (cloud databases):
 ```
 ?sslmode=require
 ```
 
-### 4. Rotate Passwords
+### 4. Secure Your PostgreSQL Installation
 
-Regularly reset database password in Neon dashboard.
+**Set strong password:**
+```sql
+ALTER USER postgres PASSWORD 'very-strong-password-123!';
+```
+
+**Restrict network access** (in `pg_hba.conf`):
+```
+# Only allow local connections
+host    all    all    127.0.0.1/32    md5
+```
+
+### 5. Rotate Passwords Regularly
+
+Update password and `.env` file periodically.
 
 ### 5. Limit Permissions
 
@@ -491,64 +631,123 @@ CREATE USER readonly WITH PASSWORD 'secure-password';
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly;
 ```
 
-## Production Checklist
+## Local Development Checklist
 
-- [ ] Database created on Neon
-- [ ] Connection string added to `.env`
-- [ ] SSL mode enabled (`sslmode=require`)
-- [ ] Migrations tested and working
+- [ ] PostgreSQL installed on Windows
+- [ ] Database `portfolio_db` created
+- [ ] Connection string added to `backend/.env`
+- [ ] Backend server connects successfully
+- [ ] Migrations run and tables created
+- [ ] pgAdmin 4 installed and accessible
+- [ ] Test contact form submission works
+- [ ] Backup strategy planned
+- [ ] PostgreSQL service runs on startup
 - [ ] Connection pooling configured
-- [ ] Backup strategy in place
-- [ ] Monitoring enabled in Neon dashboard
-- [ ] Credentials stored securely (not in code)
-- [ ] Database indexed properly
-- [ ] Query performance tested
 
-## Neon Free Tier Limits
+## When Ready to Deploy
 
-| Resource | Free Tier | Notes |
-|----------|-----------|-------|
-| Storage | 0.5 GB | Enough for most portfolios |
-| Compute | 100 hours/month | Auto-suspends when idle |
-| Branches | 10 | Great for testing |
-| Projects | Unlimited | One per environment |
-| Data Transfer | 5 GB/month | Plenty for API usage |
+### Migration Path: Local → Cloud Database
 
-**Upgrade if needed:** Pro plan starts at $19/month
+When you're ready for production, you have several options:
 
-## Alternative Database Options
+#### Option 1: Neon (Serverless PostgreSQL)
+- **Pros**: Free tier, auto-scaling, zero maintenance
+- **Setup**: 5 minutes
+- **Cost**: Free tier → $19/mo for production
 
-If you prefer other options:
+1. Sign up at [neon.tech](https://neon.tech)
+2. Create project, get connection string
+3. Export local data: `pg_dump -U postgres portfolio_db > export.sql`
+4. Import to Neon: `psql "neon-connection-string" < export.sql`
+5. Update `DATABASE_URL` in production environment
 
-### 1. Supabase (PostgreSQL)
-```env
-DATABASE_URL=postgresql://postgres:[password]@db.xxx.supabase.co:5432/postgres
+#### Option 2: Supabase (PostgreSQL + Features)
+- **Pros**: Free tier, includes auth/storage/realtime
+- **Setup**: 5 minutes
+- **Cost**: Free tier → $25/mo for production
+
+1. Sign up at [supabase.com](https://supabase.com)
+2. Create project, get connection string
+3. Export/import data same as above
+4. Update `DATABASE_URL` in production
+
+#### Option 3: Railway (Full Platform)
+- **Pros**: Easy deployment, includes hosting
+- **Setup**: 10 minutes
+- **Cost**: $5/mo credit → pay as you go
+
+1. Sign up at [railway.app](https://railway.app)
+2. Create PostgreSQL service
+3. Deploy your backend
+4. Automatic migration on deploy
+
+#### Option 4: Render (PostgreSQL Managed)
+- **Pros**: Free tier, simple pricing
+- **Setup**: 5 minutes
+- **Cost**: Free tier → $7/mo for production
+
+1. Sign up at [render.com](https://render.com)
+2. Create PostgreSQL database
+3. Export/import data
+4. Deploy backend service
+
+### Data Migration Steps
+
+```bash
+# 1. Backup local database
+pg_dump -U postgres -d portfolio_db > production_export.sql
+
+# 2. Connect to cloud database
+psql "your-cloud-database-connection-string"
+
+# 3. Import data
+\i production_export.sql
+
+# 4. Verify migration
+SELECT COUNT(*) FROM contact_messages;
+SELECT COUNT(*) FROM users;
+SELECT COUNT(*) FROM galleries;
+
+# 5. Update environment variables in production
+DATABASE_URL=your-cloud-database-url
 ```
 
-### 2. Railway (PostgreSQL)
-```env
-DATABASE_URL=postgresql://postgres:[password]@containers-us-west-xxx.railway.app:7432/railway
-```
+### Zero-Downtime Migration
 
-### 3. Render (PostgreSQL)
-```env
-DATABASE_URL=postgresql://user:pass@dpg-xxx-a.oregon-postgres.render.com/database
-```
-
-All work the same way - just update `DATABASE_URL` in `.env`
+1. Keep local database running
+2. Set up cloud database
+3. Export and import data
+4. Test cloud database connection
+5. Update production `DATABASE_URL`
+6. Monitor for issues
+7. Keep local backup for rollback if needed
 
 ## Summary
 
-1. **Sign up** at [neon.tech](https://neon.tech)
-2. **Create project** → Get connection string
-3. **Add to `.env`** → `DATABASE_URL=postgresql://...`
+**Current Setup (Development):**
+1. **Install PostgreSQL** on Windows
+2. **Create database** `portfolio_db` using pgAdmin or psql
+3. **Configure** `backend/.env` with local connection string
 4. **Run backend** → Migrations create tables automatically
-5. **Test** → Submit contact form, check database
+5. **Use pgAdmin** for visual database management
 
-Your database is now ready! The backend will automatically:
-- Connect to Neon
-- Create all tables
+**When Ready for Production:**
+1. Choose cloud provider (Neon, Supabase, Railway, or Render)
+2. Export local data with `pg_dump`
+3. Import to cloud database
+4. Update `DATABASE_URL` in production environment
+5. Deploy and monitor
+
+Your database is now ready for local development! The backend will automatically:
+- Connect to your local PostgreSQL
+- Create all tables via migrations
 - Handle all CRUD operations
 - Manage connections efficiently
 
-For support: [Neon Discord](https://discord.gg/neon) or [Documentation](https://neon.tech/docs)
+**Next Steps:**
+1. Start building and testing locally
+2. Learn PostgreSQL with pgAdmin
+3. Create regular backups
+4. When ready, migrate to cloud database for production
+
+For PostgreSQL help: [PostgreSQL Documentation](https://www.postgresql.org/docs/) or [pgAdmin Docs](https://www.pgadmin.org/docs/)

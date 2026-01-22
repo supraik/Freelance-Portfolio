@@ -17,6 +17,7 @@ import (
 	"golang.org/x/term"
 
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -79,8 +80,8 @@ func main() {
 
 	// Insert user
 	query := `
-		INSERT INTO admin_users (email, password_hash, name)
-		VALUES ($1, $2, $3)
+		INSERT INTO users (email, password_hash, username, role)
+		VALUES ($1, $2, $3, 'admin')
 		RETURNING id
 	`
 
