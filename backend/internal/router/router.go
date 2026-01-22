@@ -29,17 +29,23 @@ func New(db *sql.DB, cfg *config.Config) *gin.Engine {
 	// Initialize services
 	emailService := services.NewEmailService(cfg)
 	storageService := services.NewStorageService(cfg.UploadDir, cfg.MaxFileSize)
+	cloudinaryService, err := services.NewCloudinaryService(cfg)
+	if err != nil {
+		panic("Failed to initialize Cloudinary: " + err.Error())
+	}
 
 	// Initialize repositories
 	contactRepo := repository.NewContactRepository(db)
 	galleryRepo := repository.NewGalleryRepository(db)
 	userRepo := repository.NewUserRepository(db)
+	portfolioSectionRepo := repository.NewPortfolioSectionRepository(db)
 
 	// Initialize handlers
 	contactHandler := handlers.NewContactHandler(contactRepo, emailService)
 	galleryHandler := handlers.NewGalleryHandler(galleryRepo)
 	authHandler := handlers.NewAuthHandler(userRepo, cfg)
 	uploadHandler := handlers.NewUploadHandler(storageService)
+	portfolioHandler := handlers.NewPortfolioHandler(portfolioSectionRepo, galleryRepo, cloudinaryService)
 
 	// Health check
 	r.GET("/health", func(c *gin.Context) {
@@ -71,6 +77,10 @@ func New(db *sql.DB, cfg *config.Config) *gin.Engine {
 			// Contact management
 			admin.GET("/contacts", contactHandler.GetAll)
 			admin.PATCH("/contacts/:id/read", contactHandler.MarkAsRead)
+
+			// Portfolio sections
+			admin.GET("/portfolio/sections", portfolioHandler.GetSections)
+			admin.PUT("/portfolio/sections/:id/image", portfolioHandler.UpdateSectionImage)
 
 			// Gallery management
 			admin.POST("/galleries", galleryHandler.Create)

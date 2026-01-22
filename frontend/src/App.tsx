@@ -10,6 +10,8 @@ import GalleryCategory from "@/pages/GalleryCategory";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/NotFound";
+import AdminLogin from "@/pages/admin/Login";
+import Dashboard from "@/pages/admin/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,11 @@ const App = () => (
             <Route path="/galleries/:categoryId" element={<GalleryCategory />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin_123" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
