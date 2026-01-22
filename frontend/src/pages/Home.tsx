@@ -2,8 +2,34 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { siteConfig, heroContent } from "@/data/portfolioContent";
+import { useAuthStore } from "@/stores/authStore";
+import { EditableImage } from "@/components/admin/EditableImage";
+import { portfolioAPI } from "@/lib/api";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Home = () => {
+  const { isAdmin } = useAuthStore();
+  const { toast } = useToast();
+  const [heroImage, setHeroImage] = useState(heroContent.image);
+
+  const handleReplaceHeroImage = async (file: File) => {
+    try {
+      const result = await portfolioAPI.updateSectionImage(1, file); // Assuming hero section ID is 1
+      setHeroImage(result.data.image.url);
+      toast({
+        title: "Success",
+        description: "Hero image updated successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update hero image",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-foreground">
       {/* Hero Section - Full Screen */}
@@ -15,11 +41,21 @@ const Home = () => {
           transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
           className="absolute inset-0"
         >
-          <img
-            src={heroContent.image}
-            alt={siteConfig.name}
-            className="w-full h-full object-cover"
-          />
+          {isAdmin ? (
+            <EditableImage
+              src={heroImage}
+              alt={siteConfig.name}
+              className="w-full h-full object-cover"
+              onReplace={handleReplaceHeroImage}
+              canDelete={false}
+            />
+          ) : (
+            <img
+              src={heroImage}
+              alt={siteConfig.name}
+              className="w-full h-full object-cover"
+            />
+          )}
           {/* Gradient Overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/20 to-foreground/30" />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/30 via-transparent to-transparent" />

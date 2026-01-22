@@ -2,11 +2,15 @@ import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { galleryCategories } from "@/data/portfolioContent";
+import { useAuthStore } from "@/stores/authStore";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const HorizontalGallery = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const { isAdmin } = useAuthStore();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -138,6 +142,23 @@ const HorizontalGallery = () => {
           </span>
         </div>
       </motion.div>
+
+      {/* Admin Add Gallery Button */}
+      {isAdmin && (
+        <div className="absolute top-8 right-8 z-20">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => {
+              // Navigate to admin galleries management
+              window.location.href = '/admin/galleries';
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Manage Galleries
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
