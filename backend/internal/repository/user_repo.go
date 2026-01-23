@@ -21,8 +21,8 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 // GetByEmail retrieves a user by email
 func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
 	query := `
-		SELECT id, email, password_hash, name, created_at, last_login
-		FROM admin_users
+		SELECT id, email, password_hash, username, created_at
+		FROM users
 		WHERE email = $1
 	`
 
@@ -31,13 +31,17 @@ func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
 		&user.ID,
 		&user.Email,
 		&user.PasswordHash,
-		&user.Name,
+		&user.Username,
 		&user.CreatedAt,
-		&user.LastLogin,
 	)
 
 	if err != nil {
 		return nil, err
+	}
+
+	// Set a default name from username if needed
+	if user.Name == "" {
+		user.Name = user.Username
 	}
 
 	return &user, nil
@@ -46,8 +50,8 @@ func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
 // GetByID retrieves a user by ID
 func (r *UserRepository) GetByID(id int) (*models.User, error) {
 	query := `
-		SELECT id, email, password_hash, name, created_at, last_login
-		FROM admin_users
+		SELECT id, email, password_hash, username, created_at
+		FROM users
 		WHERE id = $1
 	`
 
@@ -56,13 +60,17 @@ func (r *UserRepository) GetByID(id int) (*models.User, error) {
 		&user.ID,
 		&user.Email,
 		&user.PasswordHash,
-		&user.Name,
+		&user.Username,
 		&user.CreatedAt,
-		&user.LastLogin,
 	)
 
 	if err != nil {
 		return nil, err
+	}
+
+	// Set a default name from username if needed
+	if user.Name == "" {
+		user.Name = user.Username
 	}
 
 	return &user, nil

@@ -21,13 +21,18 @@ import (
 )
 
 func main() {
-	// Load .env file
-	godotenv.Load()
+	// Load .env file - try multiple locations
+	if err := godotenv.Load(".env"); err != nil {
+		// Try parent directory if not found in current directory
+		if err := godotenv.Load("../.env"); err != nil {
+			log.Printf("Warning: .env file not found in current or parent directory")
+		}
+	}
 
 	// Get database URL from environment
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		log.Fatal("DATABASE_URL not set in environment")
+		log.Fatal("DATABASE_URL not set in environment. Make sure .env file exists in backend/ directory")
 	}
 
 	// Connect to database

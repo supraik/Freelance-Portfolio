@@ -47,16 +47,22 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
+	// Log the email being attempted (for debugging)
+	println("Login attempt with email:", req.Email)
+
 	// Find user
 	user, err := h.repo.GetByEmail(req.Email)
 	if err != nil {
-		response.Error(c, http.StatusUnauthorized, "Invalid credentials")
+		println("User not found:", req.Email)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found with email: " + req.Email})
 		return
 	}
 
+	println("User found:", user.Email, "ID:", user.ID)
+
 	// Verify password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		response.Error(c, http.StatusUnauthorized, "Invalid credentials")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Password mismatch", "email": req.Email})
 		return
 	}
 
@@ -84,9 +90,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Login successful", models.LoginResponse{
 		Token: tokenString,
 		User: models.UserInfo{
-			ID:    user.ID,
-			Email: user.Email,
-			Name:  user.Name,
+			ID:       user.ID,
+			Email:    user.Email,
+			Name:     user.Name,
+			Username: user.Username,
+			Role:     "admin", // All users in this system are admins
 		},
 	})
 }

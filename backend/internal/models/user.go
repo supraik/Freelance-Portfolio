@@ -9,6 +9,7 @@ type User struct {
 	Email        string     `json:"email" validate:"required,email"`
 	PasswordHash string     `json:"-"` // Never send in JSON
 	Name         string     `json:"name"`
+	Username     string     `json:"username"`
 	CreatedAt    time.Time  `json:"created_at"`
 	LastLogin    *time.Time `json:"last_login,omitempty"`
 }
@@ -27,7 +28,9 @@ type LoginResponse struct {
 
 // UserInfo is public user information
 type UserInfo struct {
-	ID    int    `json:"id"`
-	Email string `json:"email"`
-	Name  string `json:"name"`
+	ID       int    `json:"id"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Role     string `json:"role"`
 }
