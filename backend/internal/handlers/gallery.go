@@ -159,3 +159,29 @@ func (h *GalleryHandler) DeleteImage(c *gin.Context) {
 
 	response.Success(c, http.StatusOK, "Image deleted successfully", nil)
 }
+
+// UpdateImage handles PUT /api/admin/images/:id
+func (h *GalleryHandler) UpdateImage(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, "Invalid image ID")
+		return
+	}
+
+	var image models.GalleryImage
+	if err := c.ShouldBindJSON(&image); err != nil {
+		response.Error(c, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	image.ID = id
+
+	if err := h.repo.UpdateImage(&image); err != nil {
+		log.Printf("Failed to update image: %v", err)
+		response.Error(c, http.StatusInternalServerError, "Failed to update image")
+		return
+	}
+
+	response.Success(c, http.StatusOK, "Image updated successfully", image)
+}

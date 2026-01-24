@@ -89,6 +89,7 @@ func New(db *sql.DB, cfg *config.Config) *gin.Engine {
 
 			// Image management
 			admin.POST("/galleries/:id/images", galleryHandler.CreateImage)
+			admin.PUT("/images/:id", galleryHandler.UpdateImage)
 			admin.DELETE("/images/:id", galleryHandler.DeleteImage)
 
 			// Image upload

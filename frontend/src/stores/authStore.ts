@@ -31,8 +31,19 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         try {
           const response = await authAPI.login(email, password);
-          // Response structure: { success, message, data: { token, user } }
-          const { token, user } = response.data.data;
+          
+          // Debug: Log the full response to see structure
+          console.log('Full response:', response);
+          console.log('response.data:', response.data);
+          console.log('response.data.data:', response.data.data);
+          
+          // Backend returns: { success: true, message: "...", data: { token, user } }
+          // Axios wraps it, so: response.data = { success, message, data: {...} }
+          const responseData = response.data.data || response.data;
+          const { token, user } = responseData;
+
+          console.log('Extracted token:', token);
+          console.log('Extracted user:', user);
 
           localStorage.setItem('auth_token', token);
           localStorage.setItem('user', JSON.stringify(user));

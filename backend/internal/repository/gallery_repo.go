@@ -183,3 +183,15 @@ func (r *GalleryRepository) DeleteImage(id int) error {
 	_, err := r.db.Exec(query, id)
 	return err
 }
+
+// UpdateImage updates an existing gallery image
+func (r *GalleryRepository) UpdateImage(img *models.GalleryImage) error {
+	query := `
+		UPDATE gallery_images
+		SET src = $1, alt = $2, aspect_ratio = $3
+		WHERE id = $4
+	`
+
+	_, err := r.db.Exec(query, img.Src, img.Alt, img.AspectRatio, img.ID)
+	return err
+}

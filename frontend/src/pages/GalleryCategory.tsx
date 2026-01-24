@@ -1,12 +1,109 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { galleryCategories } from "@/data/portfolioContent";
+import { useState, useEffect } from "react";
+import { galleryCategories, GalleryImage } from "@/data/portfolioContent";
 import ImageGrid from "@/components/gallery/ImageGrid";
+import AdminImageGrid, { AdminGalleryImage } from "@/components/admin/AdminImageGrid";
+import { useAuthStore } from "@/stores/authStore";
+import { galleryAPI } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const GalleryCategory = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const category = galleryCategories.find((cat) => cat.id === categoryId);
+  const { isAdmin } = useAuthStore();
+  const { toast } = useToast();
+  
+  const staticCategory = galleryCategories.find((cat) => cat.id === categoryId);
+  const [category, setCategory] = useState(staticCategory);
+  const [images, setImages] = useState<GalleryImage[]>(staticCategory?.images || []);
+  const [adminImages, setAdminImages] = useState<AdminGalleryImage[]>([]);
+  const [dbCategoryId, setDbCategoryId] = useState<number | null>(null);
+
+  // Fetch gallery data from backend if admin
+  useEffect(() => {
+    const fetchGalleryData = async () => {
+      if (!categoryId || !isAdmin) return;
+      
+      try {
+        const response = await galleryAPI.getBySlug(categoryId);
+        if (response.success && response.data) {
+          setDbCategoryId(response.data.id);
+          if (response.data.images && response.data.images.length > 0) {
+            // Map backend images to admin format (with IDs)
+            const mappedImages: AdminGalleryImage[] = response.data.images.map((img: any) => ({
+              id: img.id,
+              src: img.src,
+              alt: img.alt || '',
+              aspectRatio: img.aspect_ratio as "portrait" | "landscape" | "square",
+            }));
+            setAdminImages(mappedImages);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch gallery data:', error);
+      }
+    };
+
+    fetchGalleryData();
+  }, [categoryId, isAdmin]);
+
+  const handleImageUpdate = async (imageId: number, file: File) => {
+    try {
+      const response = await galleryAPI.updateImage(imageId, file);
+      
+      // Update local state
+      setAdminImages(prev => prev.map(img => 
+        img.id === imageId 
+          ? { ...img, src: response.data.src, alt: response.data.alt || img.alt }
+          : img
+      ));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleImageDelete = async (imageId: number) => {
+    try {
+      await galleryAPI.deleteImage(imageId);
+      
+      // Remove from local state
+      setAdminImages(prev => prev.filter(img => img.id !== imageId));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleImageAdd = async (file: File) => {
+    if (!dbCategoryId) {
+      toast({
+        title: "Error",
+        description: "Gallery not found in database",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await galleryAPI.uploadImage(
+        dbCategoryId,
+        file,
+        file.name,
+        'portrait' // Default to portrait, could add selection UI
+      );
+      
+      const newImage: AdminGalleryImage = {
+        id: response.data.id,
+        src: response.data.src,
+        alt: response.data.alt,
+        aspectRatio: response.data.aspect_ratio,
+      };
+      
+      setAdminImages(prev => [...prev, newImage]);
+    } catch (error) {
+      throw error;
+    }
+  };
 
   if (!category) {
     return (
@@ -89,7 +186,17 @@ const GalleryCategory = () => {
       {/* Image Gallery */}
       <section className="py-16 md:py-24 lg:py-32">
         <div className="editorial-container">
-          <ImageGrid images={category.images} />
+          {isAdmin && dbCategoryId && adminImages.length > 0 ? (
+            <AdminImageGrid
+              images={adminImages}
+              categoryId={dbCategoryId}
+              onImageUpdate={handleImageUpdate}
+              onImageDelete={handleImageDelete}
+              onImageAdd={handleImageAdd}
+            />
+          ) : (
+            <ImageGrid images={images} />
+          )}
         </div>
       </section>
 

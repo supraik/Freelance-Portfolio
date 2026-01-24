@@ -71,6 +71,10 @@ export const galleryAPI = {
     const response = await api.get('/galleries');
     return response.data;
   },
+  getBySlug: async (slug: string) => {
+    const response = await api.get(`/galleries/${slug}`);
+    return response.data;
+  },
   create: async (data: any) => {
     const response = await api.post('/admin/galleries', data);
     return response.data;
@@ -83,13 +87,46 @@ export const galleryAPI = {
     const response = await api.delete(`/admin/galleries/${id}`);
     return response.data;
   },
-  uploadImage: async (galleryId: number, file: File) => {
+  uploadImage: async (categoryId: number, file: File, alt: string = '', aspectRatio: string = 'portrait') => {
     const formData = new FormData();
-    formData.append('image', file);
-    const response = await api.post(`/admin/galleries/${galleryId}/images`, formData, {
+    formData.append('file', file);
+    
+    // First upload the file to get URL
+    const uploadResponse = await api.post('/admin/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+    });
+    
+    const imageUrl = uploadResponse.data.data.url;
+    
+    // Then create the gallery image entry
+    const imageData = {
+      src: imageUrl,
+      alt: alt || file.name,
+      aspect_ratio: aspectRatio,
+    };
+    
+    const response = await api.post(`/admin/galleries/${categoryId}/images`, imageData);
+    return response.data;
+  },
+  updateImage: async (imageId: number, file: File, alt?: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // Upload new file
+    const uploadResponse = await api.post('/admin/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    const imageUrl = uploadResponse.data.data.url;
+    
+    // Update image record
+    const response = await api.put(`/admin/images/${imageId}`, {
+      src: imageUrl,
+      alt: alt,
     });
     return response.data;
   },
