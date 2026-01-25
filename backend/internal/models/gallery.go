@@ -11,7 +11,7 @@ type GalleryCategory struct {
 	Description  string         `json:"description"`
 	CoverImage   string         `json:"cover_image"`
 	DisplayOrder int            `json:"display_order"`
-	Images       []GalleryImage `json:"images,omitempty"`
+	Images       []GalleryImage `json:"images"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
 }
