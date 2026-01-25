@@ -16,37 +16,50 @@ const GalleryCategory = () => {
   
   const staticCategory = galleryCategories.find((cat) => cat.id === categoryId);
   const [category, setCategory] = useState(staticCategory);
-  const [images, setImages] = useState<GalleryImage[]>(staticCategory?.images || []);
+  const [images, setImages] = useState<GalleryImage[]>([]);
   const [adminImages, setAdminImages] = useState<AdminGalleryImage[]>([]);
   const [dbCategoryId, setDbCategoryId] = useState<number | null>(null);
+  const [loadingFromDB, setLoadingFromDB] = useState(false);
 
-  // Fetch gallery data from backend if admin
+  // Fetch gallery data from backend for everyone
   useEffect(() => {
     const fetchGalleryData = async () => {
-      if (!categoryId || !isAdmin) return;
+      if (!categoryId) return;
       
+      setLoadingFromDB(true);
       try {
         const response = await galleryAPI.getBySlug(categoryId);
+        
         if (response.success && response.data) {
           setDbCategoryId(response.data.id);
-          if (response.data.images && response.data.images.length > 0) {
-            // Map backend images to admin format (with IDs)
-            const mappedImages: AdminGalleryImage[] = response.data.images.map((img: any) => ({
-              id: img.id,
-              src: img.src,
-              alt: img.alt || '',
-              aspectRatio: img.aspect_ratio as "portrait" | "landscape" | "square",
-            }));
-            setAdminImages(mappedImages);
-          }
+          
+          // Map backend images (will be empty array if no images)
+          const mappedAdminImages: AdminGalleryImage[] = (response.data.images || []).map((img: any) => ({
+            id: img.id,
+            src: img.src,
+            alt: img.alt || '',
+            aspectRatio: img.aspect_ratio as "portrait" | "landscape" | "square",
+          }));
+          setAdminImages(mappedAdminImages);
+          
+          // Also map to regular format for public display
+          const mappedPublicImages: GalleryImage[] = (response.data.images || []).map((img: any) => ({
+            src: img.src,
+            alt: img.alt || '',
+            aspectRatio: img.aspect_ratio as "portrait" | "landscape" | "square",
+          }));
+          setImages(mappedPublicImages);
         }
       } catch (error) {
         console.error('Failed to fetch gallery data:', error);
+        setImages([]);
+      } finally {
+        setLoadingFromDB(false);
       }
     };
 
     fetchGalleryData();
-  }, [categoryId, isAdmin]);
+  }, [categoryId, staticCategory]);
 
   const handleImageUpdate = async (imageId: number, file: File) => {
     try {
@@ -186,7 +199,7 @@ const GalleryCategory = () => {
       {/* Image Gallery */}
       <section className="py-16 md:py-24 lg:py-32">
         <div className="editorial-container">
-          {isAdmin && dbCategoryId && adminImages.length > 0 ? (
+          {isAdmin && dbCategoryId ? (
             <AdminImageGrid
               images={adminImages}
               categoryId={dbCategoryId}
